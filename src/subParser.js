@@ -321,7 +321,25 @@ export class SubParser {
             '🇷🇺': ['俄罗斯', 'RU', 'Russia', 'Moscow'],
             '🇨🇦': ['加拿大', 'CA', 'Canada'],
             '🇦🇺': ['澳洲', 'AU', 'Australia', 'Sydney'],
-            '🇮🇳': ['印度', 'India', 'Mumbai']
+            '🇮🇳': ['印度', 'India', 'Mumbai'],
+            '🇲🇽': ['墨西哥', 'Mexico'],
+            '🇦🇪': ['阿联酋', 'UAE', 'United Arab Emirates', '迪拜', 'Dubai'],
+            '🇫🇮': ['芬兰', 'Finland', 'Helsinki'],
+            '🇸🇪': ['瑞典', 'Sweden', 'Stockholm'],
+            '🇨🇭': ['瑞士', 'Switzerland', 'Zurich'],
+            '🇹🇷': ['土耳其', 'Turkey', 'Istanbul'],
+            '🇧🇷': ['巴西', 'Brazil', 'Sao Paulo'],
+            '🇦🇷': ['阿根廷', 'Argentina'],
+            '🇨🇱': ['智利', 'Chile'],
+            '🇮🇹': ['意大利', 'Italy', 'Milan', 'Rome'],
+            '🇺🇦': ['乌克兰', 'Ukraine'],
+            '🇵🇭': ['菲律宾', 'Philippines'],
+            '🇻🇳': ['越南', 'Vietnam'],
+            '🇹🇭': ['泰国', 'Thailand', 'Bangkok'],
+            '🇲🇾': ['马来西亚', 'Malaysia', 'Kuala Lumpur'],
+            '🇮🇩': ['印尼', 'Indonesia', 'Jakarta'],
+            '🇪🇬': ['埃及', 'Egypt'],
+            '🇿🇦': ['南非', 'South Africa', 'Johannesburg']
         };
 
         for (const [emoji, keywords] of Object.entries(emojiMap)) {
