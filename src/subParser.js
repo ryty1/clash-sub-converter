@@ -270,9 +270,25 @@ export class SubParser {
 
                 // Normalization for v2ray-plugin
                 if (proxy.plugin === 'v2ray-plugin' || proxy.plugin === 'obfs-local') {
-                    if (proxy['plugin-opts'].tls === 'true') proxy['plugin-opts'].tls = true;
-                    // Force remove mux as requested by user
-                    delete proxy['plugin-opts'].mux;
+                    if (proxy['plugin-opts'].tls === 'true' || proxy['plugin-opts'].tls === true) {
+                        proxy['plugin-opts'].tls = true;
+                        // Map skip-cert-verify to allowInsecure if present in proxy or opts
+                        if (proxy['skip-cert-verify'] === true || proxy['plugin-opts']['skip-cert-verify'] === 'true') {
+                            proxy['plugin-opts'].allowInsecure = true;
+                        }
+                    }
+
+                    // Explicitly set mux to false
+                    proxy['plugin-opts'].mux = false;
+
+                    // Ensure 'peer' is set if 'host' or 'sni' is present
+                    // 'peer' is often used as SNI in v2ray-plugin
+                    if (proxy['plugin-opts'].host) {
+                        proxy['plugin-opts'].peer = proxy['plugin-opts'].host;
+                    } else if (params.get('sni')) {
+                        proxy['plugin-opts'].peer = params.get('sni');
+                        proxy['plugin-opts'].host = params.get('sni');
+                    }
                 }
             }
 
