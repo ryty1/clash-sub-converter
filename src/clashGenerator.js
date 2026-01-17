@@ -126,7 +126,7 @@ proxies:
                 if (clean['plugin-opts']) {
                     yaml += `    plugin-opts:\n`;
                     for (const [k, v] of Object.entries(clean['plugin-opts'])) {
-                        yaml += `      ${k}: ${v}\n`;
+                        yaml += `      ${k}: "${v}"\n`;
                     }
                 }
             }

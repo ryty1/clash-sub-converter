@@ -256,7 +256,12 @@ export class SubParser {
                     const equalsIndex = part.indexOf('=');
                     if (equalsIndex !== -1) {
                         const key = part.substring(0, equalsIndex);
-                        const val = part.substring(equalsIndex + 1);
+                        let val = part.substring(equalsIndex + 1);
+                        try {
+                            if (val.includes('%')) {
+                                val = decodeURIComponent(val);
+                            }
+                        } catch (e) { }
                         proxy['plugin-opts'][key] = val;
                     } else {
                         proxy['plugin-opts'][part] = true;
