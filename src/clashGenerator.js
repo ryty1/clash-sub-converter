@@ -7,7 +7,7 @@ export class ClashGenerator {
         this.config = config;
     }
 
-    generate(proxies, useMeta = false) {
+    async generate(proxies, useMeta = false) {
         // 去重节点 (按 name + server + port)
         const uniqueProxies = this.deduplicateProxies(proxies);
 
@@ -70,18 +70,100 @@ proxies:
             yaml += this.proxyGroupToYaml(group);
         }
 
-        // 添加规则
+        // 添加内联规则 (fetch and inline)
         yaml += '\nrules:\n';
-        const rules = this.generateRulesWithProviders();
-        for (const rule of rules) {
+        const inlineRules = await this.fetchInlineRules();
+        for (const rule of inlineRules) {
             yaml += `  - ${rule}\n`;
         }
 
-        // 添加 rule-providers
-        yaml += '\nrule-providers:\n';
-        yaml += this.generateRuleProvidersYaml();
-
         return yaml;
+    }
+
+    async fetchInlineRules() {
+        const allRules = [];
+
+        // Fetch all remote rulesets in parallel
+        const fetchPromises = this.config.rulesets.map(async (rs) => {
+            let group = rs.group;
+            if (this.removedGroups && this.removedGroups.has(group)) {
+                group = 'DIRECT';
+            }
+
+            if (rs.isBuiltin) {
+                // Built-in rules (GEOIP, FINAL)
+                if (rs.type === 'GEOIP') {
+                    return [`GEOIP,${rs.value},${group}`];
+                } else if (rs.type === 'FINAL') {
+                    return [`MATCH,${group}`];
+                }
+                return [];
+            }
+
+            // Fetch remote ruleset
+            try {
+                const response = await fetch(rs.source, {
+                    headers: { 'User-Agent': 'ClashSubConverter/1.0' }
+                });
+                if (!response.ok) {
+                    console.error(`Failed to fetch ruleset: ${rs.source}`);
+                    return [];
+                }
+                const text = await response.text();
+                const rules = this.parseRuleList(text, group);
+                return rules;
+            } catch (e) {
+                console.error(`Error fetching ruleset ${rs.source}:`, e);
+                return [];
+            }
+        });
+
+        const results = await Promise.all(fetchPromises);
+        for (const rules of results) {
+            allRules.push(...rules);
+        }
+
+        return allRules;
+    }
+
+    parseRuleList(text, group) {
+        const rules = [];
+        const lines = text.split('\n');
+
+        for (let line of lines) {
+            line = line.trim();
+            // Skip empty lines and comments
+            if (!line || line.startsWith('#') || line.startsWith('//') || line.startsWith(';')) {
+                continue;
+            }
+
+            // Check if line already has a policy/group
+            // Format: TYPE,VALUE or TYPE,VALUE,POLICY
+            const parts = line.split(',');
+            if (parts.length >= 2) {
+                const ruleType = parts[0].toUpperCase();
+                // Supported rule types
+                const supportedTypes = [
+                    'DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'DOMAIN-REGEX',
+                    'IP-CIDR', 'IP-CIDR6', 'GEOIP', 'GEOSITE',
+                    'PROCESS-NAME', 'PROCESS-PATH',
+                    'SRC-IP-CIDR', 'SRC-PORT', 'DST-PORT',
+                    'AND', 'OR', 'NOT', 'MATCH'
+                ];
+
+                if (supportedTypes.includes(ruleType)) {
+                    // If rule already has 3 parts (type, value, policy), use as-is
+                    // Otherwise append our group
+                    if (parts.length >= 3) {
+                        rules.push(line);
+                    } else {
+                        rules.push(`${line},${group}`);
+                    }
+                }
+            }
+        }
+
+        return rules;
     }
 
     deduplicateProxies(proxies) {

@@ -119,7 +119,7 @@ async function handleSubscription(url, corsHeaders) {
 
     // Generate config
     const generator = new ClashGenerator(CONFIG);
-    const output = generator.generate(allProxies, target === 'clash.meta');
+    const output = await generator.generate(allProxies, target === 'clash.meta');
 
     return new Response(output, {
         headers: {

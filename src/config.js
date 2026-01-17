@@ -4,7 +4,7 @@
 
 export const CONFIG = {
     rulesets: [
-        { group: '🎯 全球直连', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/refs/heads/main/Clash/CFnat.list' },
+        { group: '🎯 全球直连', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/CFnat.list' },
         { group: '🎯 全球直连', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list' },
         { group: '🎯 全球直连', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list' },
         { group: '🛑 全球拦截', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list' },
