@@ -15,13 +15,22 @@ export class ClashGenerator {
 port: 7890
 socks-port: 7891
 allow-lan: false
-mode: Rule
+mode: rule
 log-level: info
-external-controller: 127.0.0.1:9090
+geodata-mode: true
+geo-auto-update: true
+geodata-loader: standard
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+  mmdb: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+  asn: https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb
 
 dns:
   enable: true
-  ipv6: false
+  ipv6: true
+  respect-rules: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
@@ -30,20 +39,19 @@ dns:
     - "time.*.com"
     - "ntp.*.com"
     - "+.pool.ntp.org"
-  default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
   nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-  fallback:
-    - https://dns.cloudflare.com/dns-query
-    - https://dns.google/dns-query
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
-    ipcidr:
-      - 240.0.0.0/4
+    - https://120.53.53.53/dns-query
+    - https://223.5.5.5/dns-query
+  proxy-server-nameserver:
+    - https://120.53.53.53/dns-query
+    - https://223.5.5.5/dns-query
+  nameserver-policy:
+    geosite:cn,private:
+      - https://120.53.53.53/dns-query
+      - https://223.5.5.5/dns-query
+    geosite:geolocation-!cn:
+      - https://dns.cloudflare.com/dns-query
+      - https://dns.google/dns-query
 
 proxies:
 `;
@@ -198,36 +206,77 @@ proxies:
 
     generateProxyGroups(proxyNames) {
         const groups = [];
+        const removedGroups = new Set();
+        this.removedGroups = removedGroups; // Store for rules generation
 
+        // First pass: Process groups with filters
         for (const g of this.config.proxyGroups) {
-            const group = { name: g.name, type: g.type };
-
             if (g.filter) {
+                const group = { name: g.name, type: g.type };
                 try {
                     const regex = new RegExp(g.filter, 'i');
                     const matched = proxyNames.filter(n => regex.test(n));
-                    // 去重
+                    if (matched.length === 0) {
+                        removedGroups.add(g.name);
+                        continue; // Skip empty filtered group
+                    }
                     group.proxies = [...new Set(matched)];
-                    if (group.proxies.length === 0) group.proxies = ['DIRECT'];
                 } catch {
-                    group.proxies = ['DIRECT'];
+                    removedGroups.add(g.name);
+                    continue;
                 }
-            } else if (g.proxies) {
-                group.proxies = g.proxies;
-            } else {
-                group.proxies = [...new Set(proxyNames)];
-            }
 
-            if (g.type === 'url-test' || g.type === 'fallback') {
-                group.url = g.url || 'http://www.gstatic.com/generate_204';
-                group.interval = g.interval || 300;
-                if (g.tolerance) group.tolerance = g.tolerance;
+                if (g.type === 'url-test' || g.type === 'fallback') {
+                    group.url = g.url || 'http://www.gstatic.com/generate_204';
+                    group.interval = g.interval || 300;
+                    if (g.tolerance) group.tolerance = g.tolerance;
+                }
+                groups.push(group);
             }
-
-            groups.push(group);
         }
 
-        return groups;
+        // Second pass: Process groups without filters (manual lists)
+        for (const g of this.config.proxyGroups) {
+            if (!g.filter) {
+                const group = { name: g.name, type: g.type };
+                let proxies = g.proxies || [];
+
+                // Filter out removed groups from the proxies list
+                if (proxies.length > 0) {
+                    proxies = proxies.filter(p => !removedGroups.has(p));
+                }
+
+                // If special handling needed for 'select' groups that might become empty
+                // usually these have static items like 'DIRECT' or 'REJECT', so we don't need aggressive fallback
+                if (proxies.length === 0) proxies = ['DIRECT'];
+
+                group.proxies = [...new Set(proxies)]; // Deduplicate
+
+                if (g.type === 'url-test' || g.type === 'fallback') {
+                    group.url = g.url || 'http://www.gstatic.com/generate_204';
+                    group.interval = g.interval || 300;
+                    if (g.tolerance) group.tolerance = g.tolerance;
+                }
+                groups.push(group);
+            }
+        }
+
+        // Sort groups to match original order logic if needed, 
+        // but currently we split them. If config order matters (it usually does for UI), 
+        // we might want to re-sort or process in one loop with a lookahead. 
+        // But simply appending manual groups after filtered ones might change order.
+        // Let's preserve order by using a map or re-iterating config.
+
+        const finalGroups = [];
+        const groupMap = new Map(groups.map(g => [g.name, g]));
+
+        for (const g of this.config.proxyGroups) {
+            if (groupMap.has(g.name)) {
+                finalGroups.push(groupMap.get(g.name));
+            }
+        }
+
+        return finalGroups;
     }
 
     generateRules() {
@@ -241,13 +290,19 @@ proxies:
         const rules = [];
 
         for (const rs of this.config.rulesets) {
+            let group = rs.group;
+            // Check if group was removed due to being empty
+            if (this.removedGroups && this.removedGroups.has(group)) {
+                group = 'DIRECT';
+            }
+
             if (rs.isBuiltin) {
                 if (rs.type === 'GEOIP') {
-                    rules.push(`GEOIP,${rs.value},${rs.group}`);
+                    rules.push(`GEOIP,${rs.value},${group}`);
                 }
             } else {
                 const name = this.getProviderName(rs.source);
-                rules.push(`RULE-SET,${name},${rs.group}`);
+                rules.push(`RULE-SET,${name},${group}`);
             }
         }
 

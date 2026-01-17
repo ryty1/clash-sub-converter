@@ -266,7 +266,8 @@ export class SubParser {
                 // Normalization for v2ray-plugin
                 if (proxy.plugin === 'v2ray-plugin' || proxy.plugin === 'obfs-local') {
                     if (proxy['plugin-opts'].tls === 'true') proxy['plugin-opts'].tls = true;
-                    if (proxy['plugin-opts'].mux === 'true') proxy['plugin-opts'].mux = true;
+                    // Force remove mux as requested by user
+                    delete proxy['plugin-opts'].mux;
                 }
             }
 
