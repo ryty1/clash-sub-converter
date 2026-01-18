@@ -73,24 +73,58 @@ async function handleSubscription(url, corsHeaders) {
         return Response.json({ error: 'Missing url parameter' }, { status: 400, headers: corsHeaders });
     }
 
-    // Fetch subscriptions
+    // Fetch subscriptions with recursive parsing
     const subscriptionUrls = decodeURIComponent(subUrl).split('|');
     const subParser = new SubParser();
     let allProxies = [];
 
-    for (const u of subscriptionUrls) {
+    // Helper function to fetch and parse content recursively
+    async function fetchAndParse(urlToFetch, depth = 0) {
+        if (depth > 3) return []; // Max recursion depth to prevent infinite loops
+
         try {
-            const response = await fetch(u, {
+            const response = await fetch(urlToFetch.trim(), {
                 headers: { 'User-Agent': 'ClashSubConverter/1.0' }
             });
-            if (response.ok) {
-                const content = await response.text();
-                const proxies = subParser.parse(content);
-                allProxies = allProxies.concat(proxies);
+            if (!response.ok) return [];
+
+            const content = await response.text();
+            const trimmed = content.trim();
+
+            // Check if content is already parseable as proxies
+            const parsedProxies = subParser.parse(content);
+            if (parsedProxies.length > 0) {
+                return parsedProxies;
             }
+
+            // Check for nested subscription URLs (https:// links in content)
+            const lines = trimmed.split('\n').filter(l => l.trim());
+            const nestedProxies = [];
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('https://') || trimmedLine.startsWith('http://')) {
+                    // Recursively fetch nested subscription
+                    const nested = await fetchAndParse(trimmedLine, depth + 1);
+                    nestedProxies.push(...nested);
+                }
+            }
+
+            if (nestedProxies.length > 0) {
+                return nestedProxies;
+            }
+
+            return [];
         } catch (e) {
-            console.error(`Failed to fetch: ${u}`, e);
+            console.error(`Failed to fetch: ${urlToFetch}`, e);
+            return [];
         }
+    }
+
+    // Process all subscription URLs in order
+    for (const u of subscriptionUrls) {
+        const proxies = await fetchAndParse(u.trim());
+        allProxies = allProxies.concat(proxies);
     }
 
     if (allProxies.length === 0) {
