@@ -10,14 +10,10 @@
 
 2. **登录 Cloudflare Dashboard** → workers/Pages → Create Project
 
-3. **连接 GitHub 仓库**，配置如下：
-   - Build command: _(留空)_
-   - Build output: _(留空)_
-   - Root directory: _(留空)_
+3. **连接 GitHub 仓库**：
+   - 选择Fork项目，无需更改配置
 
-4. **选择 Functions**：Cloudflare 会自动检测 `wrangler.toml`
-
-5. 点击 **部署** 即可
+4. 点击 **部署** 即可
 
 
 ## API 使用
