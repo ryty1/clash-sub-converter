@@ -206,7 +206,7 @@ proxies:
         existingNames.add(name);
         clean.name = name;
 
-        let yaml = `  - name: "${clean.name}"\n`;
+        let yaml = `  - name: ${clean.name}\n`;
         yaml += `    type: ${clean.type}\n`;
         yaml += `    server: ${clean.server}\n`;
         yaml += `    port: ${clean.port}\n`;
@@ -241,9 +241,12 @@ proxies:
         } else if (clean.type === 'vless') {
             yaml += `    uuid: ${clean.uuid}\n`;
             if (clean.tls) yaml += `    tls: true\n`;
+            // client-fingerprint 放在 tls 后面
+            if (clean['client-fingerprint']) {
+                yaml += `    client-fingerprint: ${clean['client-fingerprint']}\n`;
+            }
             if (clean.servername) yaml += `    servername: ${clean.servername}\n`;
             if (clean.network) yaml += `    network: ${clean.network}\n`;
-            if (clean.flow) yaml += `    flow: ${clean.flow}\n`;
             if (clean['reality-opts']) {
                 yaml += `    reality-opts:\n`;
                 yaml += `      public-key: ${clean['reality-opts']['public-key']}\n`;
@@ -253,7 +256,6 @@ proxies:
             }
             if (clean['ws-opts']) {
                 yaml += `    ws-opts:\n`;
-                // Try to decode path if it looks double encoded, similar to SS fix
                 let path = clean['ws-opts'].path || '/';
                 try {
                     if (path.includes('%')) path = decodeURIComponent(path);
@@ -267,23 +269,9 @@ proxies:
                 }
             }
             yaml += `    tfo: false\n`;
-
-            // Output skip-cert-verify if present (default to false if not set/true based on user request?) 
-            // User template has skip-cert-verify: false. 
-            // My default parser sets it to true usually. 
-            // Let's use the value from proxy object if exists, otherwise false to match template preference?
-            // Actually parser sets 'skip-cert-verify': true by default in parseVless line 131.
-            // If user wants false, I might need to change parser or override here.
-            // But let's respect what's in the object first.
-            // Wait, common error is strict verification failing. 
-            // User template specifically asks for false. 
-            // But the error he might have faced implies he wants it working.
-            // Let's output it explicitly.
-            if (clean['skip-cert-verify'] !== undefined) {
-                yaml += `    skip-cert-verify: ${clean['skip-cert-verify']}\n`;
-            } else {
-                yaml += `    skip-cert-verify: false\n`;
-            }
+            yaml += `    skip-cert-verify: ${clean['skip-cert-verify'] === true}\n`;
+            // flow 放在最后
+            if (clean.flow) yaml += `    flow: ${clean.flow}\n`;
         } else if (clean.type === 'trojan') {
             yaml += `    password: "${clean.password}"\n`;
             if (clean.sni) yaml += `    sni: ${clean.sni}\n`;
@@ -297,11 +285,13 @@ proxies:
             if (clean.sni) yaml += `    sni: ${clean.sni}\n`;
         }
 
-        if (clean['client-fingerprint']) {
+        // client-fingerprint 已在各类型中单独处理
+        // 只为非 VLESS 类型添加
+        if (clean.type !== 'vless' && clean['client-fingerprint']) {
             yaml += `    client-fingerprint: ${clean['client-fingerprint']}\n`;
         }
 
-        if (clean['skip-cert-verify']) {
+        if (clean['skip-cert-verify'] && clean.type !== 'vless') {
             yaml += `    skip-cert-verify: true\n`;
         }
 

@@ -146,6 +146,18 @@ export class SubParser {
                 network: params.get('type') || 'tcp'
             };
 
+            // 解析 flow (xtls-rprx-vision 等)
+            const flow = params.get('flow');
+            if (flow) {
+                proxy.flow = flow;
+            }
+
+            // 解析 client-fingerprint (fp 参数)
+            const fingerprint = params.get('fp');
+            if (fingerprint) {
+                proxy['client-fingerprint'] = fingerprint;
+            }
+
             if (proxy.tls) {
                 proxy.servername = params.get('sni') || url.hostname;
                 if (params.get('security') === 'reality') {
