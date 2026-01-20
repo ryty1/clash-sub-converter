@@ -8,7 +8,7 @@
 
 1. **Fork 本仓库** 或创建新仓库上传代码
 
-2. **登录 Cloudflare Dashboard** → Pages → Create Project
+2. **登录 Cloudflare Dashboard** → workers/Pages → Create Project
 
 3. **连接 GitHub 仓库**，配置如下：
    - Build command: _(留空)_
