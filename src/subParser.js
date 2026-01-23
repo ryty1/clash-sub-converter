@@ -375,6 +375,7 @@ export class SubParser {
     addEmoji(proxy) {
         const name = proxy.name;
         const emojiMap = {
+            '☁️': ['snippets', 'Snippets', 'sni', 'Sni', 'snip', 'Snip'],
             '🇭🇰': ['香港', 'HK', 'hk', 'Hong Kong', 'HongKong', 'hongkong', 'HKG'],
             '🇲🇴': ['澳门', 'MO', 'Macau', 'macao'],
             '🇹🇼': ['台湾', '新北', '彰化', 'TW', 'Taiwan', 'taipei'],

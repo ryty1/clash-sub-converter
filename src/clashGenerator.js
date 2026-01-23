@@ -309,10 +309,13 @@ proxies:
             yaml += `      - "${p}"\n`;
         }
 
-        if (group.type === 'url-test' || group.type === 'fallback') {
+        if (group.type === 'url-test' || group.type === 'fallback' || group.type === 'load-balance') {
             yaml += `    url: http://www.gstatic.com/generate_204\n`;
             yaml += `    interval: ${group.interval || 300}\n`;
             if (group.tolerance) yaml += `    tolerance: ${group.tolerance}\n`;
+            if (group.type === 'load-balance' && group.strategy) {
+                yaml += `    strategy: ${group.strategy}\n`;
+            }
         }
 
         return yaml;
@@ -340,10 +343,11 @@ proxies:
                     continue;
                 }
 
-                if (g.type === 'url-test' || g.type === 'fallback') {
+                if (g.type === 'url-test' || g.type === 'fallback' || g.type === 'load-balance') {
                     group.url = g.url || 'http://www.gstatic.com/generate_204';
                     group.interval = g.interval || 300;
                     if (g.tolerance) group.tolerance = g.tolerance;
+                    if (g.type === 'load-balance' && g.strategy) group.strategy = g.strategy;
                 }
                 groups.push(group);
             }
@@ -366,10 +370,11 @@ proxies:
 
                 group.proxies = [...new Set(proxies)]; // Deduplicate
 
-                if (g.type === 'url-test' || g.type === 'fallback') {
+                if (g.type === 'url-test' || g.type === 'fallback' || g.type === 'load-balance') {
                     group.url = g.url || 'http://www.gstatic.com/generate_204';
                     group.interval = g.interval || 300;
                     if (g.tolerance) group.tolerance = g.tolerance;
+                    if (g.type === 'load-balance' && g.strategy) group.strategy = g.strategy;
                 }
                 groups.push(group);
             }
