@@ -56,7 +56,7 @@ export const CONFIG = {
         { name: '🍃 应用净化', type: 'select', proxies: ['REJECT', 'DIRECT'] },
         { name: '🐟 漏网之鱼', type: 'select', proxies: ['🚀 节点选择', '🎯 全球直连', '♻️ 自动选择', '☑️ 手动切换', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇩🇪 德国节点', '🇫🇷 法国节点', '🇳🇱 荷兰节点', '🇮🇳 印度节点', '🇫🇮 芬兰节点', 'DIRECT'] },
 
-        { name: '☁️ Snippets', type: 'load-balance', filter: '(snippets|Snippets|Sni|sni|Snip|snip)' },
+        { name: '☁️ Snippets', type: 'select', filter: '(snippets|Snippets|Sni|sni|Snip|snip)' },
         { name: '🇭🇰 香港节点', type: 'select', filter: '(港|HK|hk|Hong Kong|HongKong|hongkong|HKG)' },
         { name: '🇲🇴 澳门节点', type: 'select', filter: '(澳门|MO|Macau|macao)' },
         { name: '🇹🇼 台湾节点', type: 'select', filter: '(台|新北|彰化|TW|Taiwan|taipei)' },
