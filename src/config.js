@@ -24,7 +24,7 @@ export const CONFIG = {
         { group: '🤖 OpenAi', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Claude.list' },
         { group: '🛸 Antigravity', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ryty1/ACL4SSR/master/Clash/antigravity.list' },
         { group: '📹 油管视频', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list' },
-        { group: '🌍 IP检测', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ryty1/ACL4SSR/blob/master/Clash/Ruleset/CheckIP.list' },
+        { group: '🌍 IP检测', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ryty1/ACL4SSR/master/Clash/Ruleset/CheckIP.list' },
         { group: '🎥 奈飞视频', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Netflix.list' },
         { group: '🌍 国外媒体', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list' },
         { group: '🌍 国外媒体', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Emby.list' },
