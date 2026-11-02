@@ -1,7 +1,3 @@
-/**
- * ACL4SSR Configuration - Pre-parsed for CF Workers
- */
-
 export const CONFIG = {
     rulesets: [
         { group: '🎯 全球直连', source: 'https://gh-proxy.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/CFnat.list' },
