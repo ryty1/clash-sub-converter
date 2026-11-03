@@ -49,7 +49,7 @@ export const CONFIG = {
         { name: 'Ⓜ️ 微软服务', type: 'select', proxies: ['🎯 全球直连', '🚀 节点选择', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇩🇪 德国节点', '🇫🇷 法国节点', '🇮🇳 印度节点', '🇦🇺 澳洲节点', 'DIRECT'] },
         { name: '🍎 苹果服务', type: 'select', proxies: ['🎯 全球直连', '🚀 节点选择', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇮🇳 印度节点', '🇦🇺 澳洲节点', 'DIRECT'] },
         { name: '📢 谷歌FCM', type: 'select', proxies: ['🚀 节点选择', '🎯 全球直连', '♻️ 自动选择', '☑️ 手动切换', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇩🇪 德国节点', '🇮🇳 印度节点', 'DIRECT'] },
-        { name: '📞 Talktone', type: 'select', proxies: ['DIRECT', 'REJECT'], include-all: true, filter: '(美国|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|USA|United States|ATL|BUF|DFW|EWR|IAD|LAX|MCI|MIA|ORD|PHX|PDX|SEA|SJC)' },
+        { name: '📞 Talktone', type: 'select', proxies: ['DIRECT', 'REJECT'], includeAll: true, filter: '(美国|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|USA|United States|ATL|BUF|DFW|EWR|IAD|LAX|MCI|MIA|ORD|PHX|PDX|SEA|SJC)' },
         { name: '🎯 全球直连', type: 'select', proxies: ['DIRECT', 'REJECT'] },
         { name: '🌍 IP检测', type: 'select', proxies: ['☑️ 手动切换', '🚀 节点选择', '♻️ 自动选择', 'DIRECT'] },
         { name: '🛑 全球拦截', type: 'select', proxies: ['DIRECT', 'REJECT'] },
