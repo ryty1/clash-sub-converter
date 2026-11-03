@@ -49,7 +49,7 @@ export const CONFIG = {
         { name: 'Ⓜ️ 微软服务', type: 'select', proxies: ['🎯 全球直连', '🚀 节点选择', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇩🇪 德国节点', '🇫🇷 法国节点', '🇮🇳 印度节点', '🇦🇺 澳洲节点', 'DIRECT'] },
         { name: '🍎 苹果服务', type: 'select', proxies: ['🎯 全球直连', '🚀 节点选择', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇮🇳 印度节点', '🇦🇺 澳洲节点', 'DIRECT'] },
         { name: '📢 谷歌FCM', type: 'select', proxies: ['🚀 节点选择', '🎯 全球直连', '♻️ 自动选择', '☑️ 手动切换', '☁️ Snippets', '🇭🇰 香港节点', '🇹🇼 台湾节点', '🇯🇵 日本节点', '🇸🇬 狮城节点', '🇺🇸 美国节点', '🇰🇷 韩国节点', '🇬🇧 英国节点', '🇩🇪 德国节点', '🇮🇳 印度节点', 'DIRECT'] },
-        { name: '📞 Talktone', type: 'select', proxies: ['🇺🇸 美国节点'] },
+        { name: '📞 Talktone', type: 'select', include-all: true, proxies: ['🇺🇸 美国节点'] },
         { name: '🎯 全球直连', type: 'select', proxies: ['DIRECT', 'REJECT'] },
         { name: '🌍 IP检测', type: 'select', proxies: ['☑️ 手动切换', '🚀 节点选择', '♻️ 自动选择', 'DIRECT'] },
         { name: '🛑 全球拦截', type: 'select', proxies: ['DIRECT', 'REJECT'] },
